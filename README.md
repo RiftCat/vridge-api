@@ -1,3 +1,11 @@
+# Quick description
+
+VRidge API is a way to interact with VRidge in any language of your choice. We use ZeroMQ sockets as a low latency transport. It can work both locally and remotely through network. 
+
+VRidge API allows you to write full or partial head tracking data, read mobile tracking data and set offsets to correct drift or sync it to your coordinate system. You can also send controller states (buttons, triggers, touchpads), and transforms (motion controller orientation and position in 3D space). 
+
+Everything is loaded as single VRidge OpenVR driver. Some of the above things can be done through writing separate OpenVR drivers but VRidge API has benefits of two-way communications with an ability to mix coordinate systems in a more elastic way. It is also more stable than separate OpenVR drivers potentially providing conflicting data.
+
 # Getting started
 
 ## General requirements 
