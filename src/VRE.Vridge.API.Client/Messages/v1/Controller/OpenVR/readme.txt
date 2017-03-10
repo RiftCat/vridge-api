@@ -1,0 +1,1 @@
+﻿Classes in OpenVR folder are 1:1 copies of OpenVR structs. See OpenVR reference for details.
