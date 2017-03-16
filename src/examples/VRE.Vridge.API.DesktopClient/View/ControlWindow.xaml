@@ -1,0 +1,96 @@
+﻿<Window x:Class="VRE.Vridge.API.DesktopTester.View.ControlWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:converters="clr-namespace:VRE.Vridge.API.DesktopTester.Converters"
+        xmlns:view="clr-namespace:VRE.Vridge.API.DesktopTester.View"
+        Height="500" Width="1000"
+        mc:Ignorable="d"
+        Title="MainWindow">
+    <Window.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="200" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+        <Border Grid.Row="0" 
+                Grid.Column="0"
+                BorderThickness="1"
+                BorderBrush="Black">
+            <Canvas x:Name="Canvas" 
+                    Background="Azure"
+                    SizeChanged="FrameworkElement_OnSizeChanged" 
+                    ClipToBounds="True"
+                    MouseMove="Canvas_OnMouseMove">
+                <Ellipse x:Name="Marker"
+                         Fill="Yellow" Stroke="Black"
+                         Cursor="Hand" ToolTip="Drag this to change position X and Z."
+                         Height="{Binding MarkerSize}" 
+                         Width="{Binding MarkerSize}"                          
+                         Canvas.Left="{Binding MarkerLeftOffset}"
+                         Canvas.Top="{Binding MarkerTopOffset}"
+                         MouseLeftButtonDown="Marker_OnMouseLeftButtonDown"
+                         MouseLeftButtonUp="Marker_OnMouseLeftButtonUp"/>
+            </Canvas>
+        </Border>
+        <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Vertical">
+            <!-- Mode selection dropdowns -->
+            <ComboBox Width="190"  
+                      Margin="5 5"
+                      ItemsSource="{Binding ControlTargets}"
+                      SelectedValue="{Binding SelectedControlTarget}"
+                      DisplayMemberPath="Value"
+                      SelectedValuePath="Key" />
+            <ComboBox Width="190"  
+                      Margin="5 0"
+                      ItemsSource="{Binding HeadTrackingModes}"
+                      SelectedValue="{Binding SelectedHeadTrackingMode}"
+                      DisplayMemberPath="Value"
+                      SelectedValuePath="Key" 
+                      Visibility="{Binding IsControllingHeadTracking, Converter={StaticResource BoolToVisibilityConverter}}" />
+            <GroupBox Header="Position">
+                <!-- Position sliders -->
+                <StackPanel Orientation="Vertical">
+                    <view:LabeledSlider Label="X" Minimum="-3" Maximum="3" SliderValue="{Binding PositionX, Mode=TwoWay}" />
+                    <view:LabeledSlider Label="Y" Minimum="-1" Maximum="3" SliderValue="{Binding PositionY, Mode=TwoWay}" />
+                    <view:LabeledSlider Label="Z" Minimum="-3" Maximum="3" SliderValue="{Binding PositionZ, Mode=TwoWay}" />
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Header="Rotation">
+                <!-- Rotation sliders -->
+                <StackPanel Orientation="Vertical">
+                    <view:LabeledSlider Label="Yaw" Minimum="-180" Maximum="180" SliderValue="{Binding Yaw, Mode=TwoWay}" />
+                    <view:LabeledSlider Label="Pitch" Minimum="-90" Maximum="90" SliderValue="{Binding Pitch, Mode=TwoWay}" />
+                    <view:LabeledSlider Label="Roll" Minimum="-180" Maximum="180" SliderValue="{Binding Roll, Mode=TwoWay}" />
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+        <!-- Control buttons -->
+        <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10">
+            <Button Height="20" Content="Connect / reconnect" Command="{Binding Connect}"></Button>
+            <Button Height="20" Content="Get status" Command="{Binding Status}"></Button>
+            <Button Height="20" Content="Reset async offset" Command="{Binding ResetAsync}"></Button>
+        </StackPanel>
+        
+        <!-- Motion controller button states -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="10" Visibility="{Binding IsControllingControllers, Converter={StaticResource BoolToVisibilityConverter}}">
+            <ToggleButton Height="70" Width="100" Content="Menu" IsChecked="{Binding IsMenuPressed}"></ToggleButton>
+            <ToggleButton Height="70" Width="100" Content="System" IsChecked="{Binding IsSystemPressed}"></ToggleButton>
+            <GroupBox Header="Trackpad" Margin="1">
+                <StackPanel Orientation="Vertical">
+                    <view:LabeledSlider Label="X" Minimum="-1" Maximum="1" SliderValue="{Binding AnalogX, Mode=TwoWay}"></view:LabeledSlider>
+                    <view:LabeledSlider Label="Y" Minimum="-1" Maximum="1" SliderValue="{Binding AnalogY, Mode=TwoWay}"></view:LabeledSlider>
+                </StackPanel>
+            </GroupBox>
+            <view:LabeledSlider Width="300" Label="Trigger" Minimum="0" Maximum="1" SliderValue="{Binding AnalogTrigger, Mode=TwoWay}"></view:LabeledSlider>
+        </StackPanel>
+    </Grid>
+</Window>
+
