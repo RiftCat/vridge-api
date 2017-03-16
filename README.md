@@ -36,7 +36,7 @@ This endpoint provides two functions:
 
 - You can connect to specific API endpoint by sending a packet with requested endpoint name and your version number. This will open a listener on the server side compatible with your requested version. Response message will contain ip:port endpoint that can be connected. 
 
-See [control channel wiki page](../../wiki/Control channel) for details. 
+See [control channel wiki page](https://github.com/RiftCat/vridge-api/wiki/Control-channel) for details. 
 
 ## Data endpoints
 
@@ -44,8 +44,8 @@ Data channels are used to interact with VRidge and send/receive actual data. Cur
 
 Controller API allows you to send VR motion controller state without writing a full OpenVR driver. This allows a more stable experience since only one driver is loaded in SteamVR. 
 
-See [Controller API](../../wiki/Controller API) for protocol and details.
+See [Controller API](https://github.com/RiftCat/vridge-api/wiki/Controller-API) for protocol and details.
 
 Head tracking endpoint allows you to control head tracking in a variety of modes. You can use it to provide positional, rotatioanal or combined data. You can also read mobile sensor data and provide an offset. You can also modify phone tracking data in real time before it's used for rendering in VR. 
 
-See [Head Tracking API](../../wiki/Head Tracking API) for protocol and available modes
+See [Head Tracking API](https://github.com/RiftCat/vridge-api/wiki/Head-Tracking-API) for protocol and available modes
