@@ -11,7 +11,7 @@ Everything is loaded as single VRidge OpenVR driver. Some of the above things ca
 ## General requirements 
 * ZeroMQ (or any lib that communicate with ZMQ sockets)
 * JSON serializer
-* API-enabled version of RiftCat (use "**api**" update code in RiftCat update settings)
+* API-enabled version of RiftCat (use **beta** channel in RiftCat update settings)
 
 VRidge API is accessible over TCP, abstracted by ZeroMQ sockets. This allows you to use API any any language that you choose. See [ZeroMQ language bindings](http://zeromq.org/bindings:_start) page and get library for language of your choice.
 
