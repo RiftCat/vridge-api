@@ -19,10 +19,11 @@ VRidge API is accessible over TCP, abstracted by ZeroMQ sockets. This allows you
 
 This repository contains example implementation of API client in .NET. You can use it in your .NET projects by simply building and referencing the APIClient project.
 
-C# project requires:
+C# projects require:
 
 * NetMQ
 * Newtonsoft.Json
+* MvvmLight (for WPF example project - /src/examples/VRE.Vridge.API.DesktopClient)
 
 Both are referenced as NuGet packages in .csproj and will be restored on pre-build.
 
