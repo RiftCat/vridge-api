@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace VRE.Vridge.API.Client.Messages.v2.Broadcast
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct HapticPulse
     {
         /// <summary>
