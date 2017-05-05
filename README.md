@@ -1,3 +1,28 @@
+# v2 note
+Wikis haven't been updated yet. This is a quick overview of upcoming changes.
+
+Haptic feedback:
+
+* Example proxy class: https://github.com/RiftCat/vridge-api/blob/v2-pre/src/VRE.Vridge.API.Client/Proxy/Broadcasts/BroadcastProxy.cs
+* Struct: https://github.com/RiftCat/vridge-api/blob/v2-pre/src/VRE.Vridge.API.Client/Messages/v2/Broadcast/HapticPulse.cs
+* Connecting: https://github.com/RiftCat/vridge-api/blob/v2-pre/src/VRE.Vridge.API.Client/Proxy/APIClient.cs#L115
+
+Broadcast channel endpoint is requested in the same way as Head Tracking and Controller endpoints, with that difference that multiple clients can connect to broadcast channel (ZMQ PUB-SUB).
+
+Head tracking - recenter & tracking state toggle:
+
+* Updated proxy: https://github.com/RiftCat/vridge-api/blob/v2-pre/src/VRE.Vridge.API.Client/Proxy/HeadTracking/HeadTrackingProxy.cs
+* Updated struct: https://github.com/RiftCat/vridge-api/blob/v2-pre/src/VRE.Vridge.API.Client/Messages/v2/HeadTracking/Requests/HeadTrackingRequest.cs
+
+WPF desktop tester was updated with controls to test above changes:
+- Recenter button.
+- Last haptic pulse is displayed in controller UI.
+- When HMD marker is dragged in/outside UI canvas the HMD switches its tracking states between "in tracking range"/"not currently tracked".
+
+v1 clients remain compatible, new features are available only if you use "2" in ProtocolVersion header during endpoint request.
+
+Above note will be removed once wikis are updated and the branch is merged into main one. This should happen mid-May.
+
 # Quick description
 
 VRidge API is a way to interact with VRidge in any language of your choice. We use ZeroMQ sockets as a low latency transport. It can work both locally and remotely through network. 
