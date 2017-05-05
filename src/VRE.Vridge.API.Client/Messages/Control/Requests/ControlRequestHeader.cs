@@ -1,6 +1,6 @@
-﻿namespace VRE.Vridge.API.Client.Messages.v1.Control.Requests
+﻿namespace VRE.Vridge.API.Client.Messages.Control.Requests
 {
-    public class ControlRequestHeader : BaseMessage
+    public class ControlRequestHeader : BaseControlMessage
     {                
         public ControlRequestHeader()
         {

@@ -1,4 +1,4 @@
-﻿namespace VRE.Vridge.API.Client.Messages
+﻿namespace VRE.Vridge.API.Client.Messages.Control
 {
     public enum ControlRequestCode
     {

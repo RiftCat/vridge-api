@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace VRE.Vridge.API.Client.Messages.v1.Control.Responses
+namespace VRE.Vridge.API.Client.Messages.Control.Responses
 {
     /// <summary>
     /// Contains list of available (or not) API services.

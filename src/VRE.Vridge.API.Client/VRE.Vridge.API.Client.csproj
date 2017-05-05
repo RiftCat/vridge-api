@@ -42,27 +42,36 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Helpers\MathHelpers.cs" />
-    <Compile Include="Messages\ControlRequestCode.cs" />
-    <Compile Include="Messages\ControlResponseCode.cs" />
+    <Compile Include="Messages\Control\ControlRequestCode.cs" />
+    <Compile Include="Messages\Control\ControlResponseCode.cs" />
     <Compile Include="EndpointNames.cs" />
-    <Compile Include="Messages\BaseMessage.cs" />
+    <Compile Include="Messages\Control\BaseControlMessage.cs" />
     <Compile Include="Messages\KeepAlive.cs" />
-    <Compile Include="Messages\v1\Controller\OpenVR\EVRButtonId.cs" />
-    <Compile Include="Messages\v1\Controller\OpenVR\VRControllerAxis_t.cs" />
-    <Compile Include="Messages\v1\Controller\OpenVR\VRControllerState_t.cs" />
-    <Compile Include="Messages\v1\Controller\OpenVR\VRController.cs" />
+    <Compile Include="Messages\OpenVR\EVRButtonId.cs" />
+    <Compile Include="Messages\OpenVR\VRControllerAxis_t.cs" />
+    <Compile Include="Messages\OpenVR\VRControllerState_t.cs" />
+    <Compile Include="Messages\v1\TrackedDeviceStatus.cs" />
+    <Compile Include="Messages\v1\Controller\VRController.cs" />
     <Compile Include="Messages\v1\Controller\Requests\ControllerRequest.cs" />
     <Compile Include="Messages\v1\Controller\Responses\ControllerStateResponse.cs" />
-    <Compile Include="Messages\v1\Control\Responses\ControlResponseHeader.cs" />
-    <Compile Include="Messages\v1\Control\Requests\ControlRequestHeader.cs" />
-    <Compile Include="Messages\v1\Control\Requests\RequestEndpoint.cs" />
-    <Compile Include="Messages\v1\Control\Responses\EndpointCreated.cs" />
+    <Compile Include="Messages\Control\Responses\ControlResponseHeader.cs" />
+    <Compile Include="Messages\Control\Requests\ControlRequestHeader.cs" />
+    <Compile Include="Messages\Control\Requests\RequestEndpoint.cs" />
+    <Compile Include="Messages\Control\Responses\EndpointCreated.cs" />
     <Compile Include="Messages\v1\HeadTracking\Requests\HeadTrackingRequest.cs" />
     <Compile Include="Messages\v1\HeadTracking\Responses\HeadTrackingResponse.cs" />
-    <Compile Include="Messages\v1\Control\Responses\EndpointStatus.cs" />
-    <Compile Include="Messages\v1\Control\Responses\APIStatus.cs" />
+    <Compile Include="Messages\Control\Responses\EndpointStatus.cs" />
+    <Compile Include="Messages\Control\Responses\APIStatus.cs" />
+    <Compile Include="Messages\v2\Broadcast\HapticPulse.cs" />
+    <Compile Include="Messages\v2\Controller\Requests\ControllerRequest.cs" />
+    <Compile Include="Messages\v2\Controller\Responses\ControllerStateResponse.cs" />
+    <Compile Include="Messages\v2\Controller\VRController.cs" />
+    <Compile Include="Messages\v2\HeadTracking\Requests\HeadTrackingRequest.cs" />
+    <Compile Include="Messages\v2\HeadTracking\Responses\HeadTrackingResponse.cs" />
+    <Compile Include="Messages\v2\TrackedDeviceStatus.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Proxy\APIClient.cs" />
+    <Compile Include="Proxy\Broadcasts\BroadcastProxy.cs" />
     <Compile Include="Proxy\ClientProxyBase.cs" />
     <Compile Include="Proxy\Controller\ControllerProxy.cs" />
     <Compile Include="Proxy\HeadTracking\HeadTrackingProxy.cs" />
@@ -87,8 +96,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Messages\v1\Controller\OpenVR\readme.txt" />
+    <Content Include="Messages\OpenVR\readme.txt" />
+    <Content Include="Messages\v1\readme.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

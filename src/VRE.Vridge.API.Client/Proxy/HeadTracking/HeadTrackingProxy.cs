@@ -2,8 +2,9 @@
 using System.Threading;
 using NetMQ;
 using VRE.Vridge.API.Client.Helpers;
-using VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests;
-using VRE.Vridge.API.Client.Messages.v1.HeadTracking.Responses;
+using VRE.Vridge.API.Client.Messages.v2;
+using VRE.Vridge.API.Client.Messages.v2.HeadTracking.Requests;
+using VRE.Vridge.API.Client.Messages.v2.HeadTracking.Responses;
 
 namespace VRE.Vridge.API.Client.Proxy.HeadTracking
 {
@@ -51,7 +52,7 @@ namespace VRE.Vridge.API.Client.Proxy.HeadTracking
         /// <summary>
         /// Sets rotational offset that will be applied to each mobile pose. Use radians.
         /// </summary>
-        public bool SetAsyncOffset(float pitch, float yaw, float roll)
+        public bool SetAsyncOffset(float yaw, float pitch, float roll)
         {
             var request = HeadTrackingRequest.CreateAsyncOffsetPacket(yaw, pitch, roll);
             var reply = SendMessage(request);
@@ -69,6 +70,32 @@ namespace VRE.Vridge.API.Client.Proxy.HeadTracking
             var reply = SendMessage(request);
 
             return reply.ReplyCode == (byte) HeadTrackingResponse.Response.AcceptedYourData;
+        }
+
+        /// <summary>
+        /// Sets current orientation as new center.
+        /// </summary>
+        public bool RecenterView()
+        {
+            var request = HeadTrackingRequest.CreateRecenterPacket();
+            var reply = SendMessage(request);
+
+            return reply.ReplyCode == (byte)HeadTrackingResponse.Response.AcceptedYourData;
+        }
+
+        /// <summary>
+        /// Toggles HMD tracking state between "actively tracked" and "out of tracking range".
+        /// </summary>        
+        public bool ChangeTrackingState(bool isCurrentlyBeingTracked)
+        {
+            var request =
+                HeadTrackingRequest.CreateStateChangePacket(isCurrentlyBeingTracked
+                    ? TrackedDeviceStatus.Active
+                    : TrackedDeviceStatus.TempUnavailable);
+
+            var reply = SendMessage(request);
+
+            return reply.ReplyCode == (byte)HeadTrackingResponse.Response.AcceptedYourData;
         }
 
         /// <summary>
@@ -131,7 +158,7 @@ namespace VRE.Vridge.API.Client.Proxy.HeadTracking
 
             var disconnectRequest = new HeadTrackingRequest()
             {
-                Version = 1,
+                Version = 2,
                 TaskType = (byte) HeadTrackingRequest.Task.Disconnect,                
             };
 
@@ -154,7 +181,7 @@ namespace VRE.Vridge.API.Client.Proxy.HeadTracking
         {
             HeadTrackingRequest reqModifiable = new HeadTrackingRequest()
             {
-                Version = 1,
+                Version = 2,
                 Data = new byte[64],
                 DataLength = 0,
                 TaskType = (byte)HeadTrackingRequest.Task.RequestSyncOffset

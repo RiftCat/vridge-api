@@ -1,18 +1,19 @@
 ﻿using System.Runtime.InteropServices;
-using VRE.Vridge.API.Client.Messages.OpenVR;
-using VRE.Vridge.API.Client.Messages.v1.Controller.Responses;
-using VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests;
+using VRE.Vridge.API.Client.Messages.v2.Controller.Responses;
 
-namespace VRE.Vridge.API.Client.Messages.v1.Controller.Requests
+
+namespace VRE.Vridge.API.Client.Messages.v2.Controller.Requests
 {
     /// <summary>
     /// Request to a VRidge API server that contains current motion controller state.
     /// <see cref="ControllerStateResponse"/> will be returned as a response.
+    /// 
+    /// Upgrade note v1->v2: No changes.
     /// </summary>
     [StructLayout(LayoutKind.Sequential, Pack = 4)]
     public struct ControllerRequest 
     {
-        private const int CurrentVersion = 1;
+        private const int CurrentVersion = 2;
 
         public int Version;
 
@@ -26,6 +27,7 @@ namespace VRE.Vridge.API.Client.Messages.v1.Controller.Requests
         [MarshalAs(UnmanagedType.I1)]
         public byte Origin;
                 
+        // Upgrade note v1->v2: No changes in VRController format. We can use the same layout.
         public VRController ControllerState;
     }
 

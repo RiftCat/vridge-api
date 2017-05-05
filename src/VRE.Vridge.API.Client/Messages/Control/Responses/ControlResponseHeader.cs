@@ -1,6 +1,6 @@
-﻿namespace VRE.Vridge.API.Client.Messages.v1.Control.Responses
+﻿namespace VRE.Vridge.API.Client.Messages.Control.Responses
 {
-    public class ControlResponseHeader : BaseMessage
+    public class ControlResponseHeader : BaseControlMessage
     {   
         // Predefined responses
         public static ControlResponseHeader ResponseInUse = new ControlResponseHeader()

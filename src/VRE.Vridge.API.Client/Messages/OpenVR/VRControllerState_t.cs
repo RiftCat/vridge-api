@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace VRE.Vridge.API.Client.Messages.v1.Controller.OpenVR
+namespace VRE.Vridge.API.Client.Messages.OpenVR
 {
     /// <summary>
     /// See VRControllerState_t in OpenVR docs.

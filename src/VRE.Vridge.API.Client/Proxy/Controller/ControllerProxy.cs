@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using NetMQ;
-using VRE.Vridge.API.Client.Messages.v1.Controller.OpenVR;
-using VRE.Vridge.API.Client.Messages.v1.Controller.Requests;
-using VRE.Vridge.API.Client.Messages.v1.Controller.Responses;
+using VRE.Vridge.API.Client.Messages.OpenVR;
+using VRE.Vridge.API.Client.Messages.v2.Controller;
+using VRE.Vridge.API.Client.Messages.v2.Controller.Requests;
+using VRE.Vridge.API.Client.Messages.v2.Controller.Responses;
+
 
 namespace VRE.Vridge.API.Client.Proxy.Controller
 {
@@ -25,7 +29,7 @@ namespace VRE.Vridge.API.Client.Proxy.Controller
         {
             controller = new ControllerRequest()
             {
-                Version = 1,
+                Version = 2,
                 Origin = (byte) ControllerOrigin.Zero,
                 TaskType = (byte) ControllerTask.SendFullState          
             };
@@ -48,7 +52,7 @@ namespace VRE.Vridge.API.Client.Proxy.Controller
         {            
             var disconnectRequest = new ControllerRequest()
             {
-                Version = 1,
+                Version = 2,
                 TaskType = (byte)ControllerTask.Disconnect
             };
 
@@ -65,7 +69,7 @@ namespace VRE.Vridge.API.Client.Proxy.Controller
                 // Connection state invalid, close anyway
             }
             CloseSocket();
-        }
+        }        
 
         private ControllerStateResponse SendMessage(object obj) => SendMessage<ControllerStateResponse>(obj);
     }

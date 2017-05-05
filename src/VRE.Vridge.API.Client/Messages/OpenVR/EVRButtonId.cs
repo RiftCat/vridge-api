@@ -1,4 +1,4 @@
-﻿namespace VRE.Vridge.API.Client.Messages.v1.Controller.OpenVR
+﻿namespace VRE.Vridge.API.Client.Messages.OpenVR
 {
     public enum EVRButtonId
     {

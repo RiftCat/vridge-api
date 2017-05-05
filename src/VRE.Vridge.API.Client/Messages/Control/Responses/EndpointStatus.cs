@@ -1,4 +1,4 @@
-﻿namespace VRE.Vridge.API.Client.Messages.v1.Control.Responses
+﻿namespace VRE.Vridge.API.Client.Messages.Control.Responses
 {    
     public class EndpointStatus : ControlResponseHeader
     {

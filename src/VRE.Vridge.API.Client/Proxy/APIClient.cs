@@ -2,8 +2,10 @@
 using NetMQ.Sockets;
 using VRE.Vridge.API.Client.Helpers;
 using VRE.Vridge.API.Client.Messages;
-using VRE.Vridge.API.Client.Messages.v1.Control.Requests;
-using VRE.Vridge.API.Client.Messages.v1.Control.Responses;
+using VRE.Vridge.API.Client.Messages.Control;
+using VRE.Vridge.API.Client.Messages.Control.Requests;
+using VRE.Vridge.API.Client.Messages.Control.Responses;
+using VRE.Vridge.API.Client.Proxy.Broadcasts;
 using VRE.Vridge.API.Client.Proxy.Controller;
 using VRE.Vridge.API.Client.Proxy.HeadTracking;
 
@@ -14,6 +16,7 @@ namespace VRE.Vridge.API.Client.Proxy
         private RequestSocket     controlSocket;
         private HeadTrackingProxy headTrackingProxy;
         private ControllerProxy   controllerProxy;
+        private BroadcastProxy    broadcastProxy;
 
         private readonly string endpointAddress;
 
@@ -109,7 +112,31 @@ namespace VRE.Vridge.API.Client.Proxy
             return controllerProxy;
         }
 
-        // TODO Refactor 2 methods above (DRY)
+        public BroadcastProxy ConnectToBroadcaster()
+        {
+            if (broadcastProxy == null)
+            {
+                // Request headtracking endpoint address
+                bool success = controlSocket.TrySendAsJson(new RequestEndpoint(EndpointNames.Broadcast), 1000);
+
+                if (!success)
+                    HandleControlConnectionException(new Exception("API server timeout."));
+
+                EndpointCreated response;
+                success = controlSocket.TryReceiveJson(out response, 1000);
+
+                if (!success)
+                    HandleControlConnectionException(new Exception("API server timeout."));
+
+                
+                // Initialize the proxy
+                broadcastProxy = new BroadcastProxy(response.EndpointAddress);
+            }
+
+            return broadcastProxy;
+        }
+
+        // TODO Refactor 3 methods above (DRY)
 
         /// <summary>
         /// Closes head tracking API connection and lets other API clients use it.
@@ -132,7 +159,15 @@ namespace VRE.Vridge.API.Client.Proxy
             controllerProxy.Disconnect();
             controllerProxy = null;
         }
-        
+
+        public void DisconnectBroadcastProxy()
+        {
+            if (controllerProxy == null) return;
+
+            broadcastProxy.Disconnect();
+            broadcastProxy = null;
+        }
+
         private void Connect()
         {
             controlSocket = new RequestSocket();            
