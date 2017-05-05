@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace VRE.Vridge.API.Client.Messages.v2.Broadcast
-{
-    [StructLayout(LayoutKind.Sequential)]
+{    
+    [StructLayout(LayoutKind.Sequential)] // Default field packing == 8
     public struct HapticPulse
     {
         /// <summary>
