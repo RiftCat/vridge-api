@@ -77,7 +77,6 @@
         <StackPanel Grid.Row="1" Grid.Column="1" Orientation="Vertical" HorizontalAlignment="Stretch" Margin="10">
             <Button Height="20" Content="Connect / reconnect" Command="{Binding Connect}"></Button>
             <Button Height="20" Content="Get status" Command="{Binding Status}"></Button>
-            <Button Height="20" Content="Reset async offset" Command="{Binding ResetAsync}"></Button>
         </StackPanel>
         
         <!-- Motion controller button states -->
@@ -90,7 +89,14 @@
                     <view:LabeledSlider Label="Y" Minimum="-1" Maximum="1" SliderValue="{Binding AnalogY, Mode=TwoWay}"></view:LabeledSlider>
                 </StackPanel>
             </GroupBox>
-            <view:LabeledSlider Width="300" Label="Trigger" Minimum="0" Maximum="1" SliderValue="{Binding AnalogTrigger, Mode=TwoWay}"></view:LabeledSlider>
+            <view:LabeledSlider Width="200" Label="Trigger" Minimum="0" Maximum="1" SliderValue="{Binding AnalogTrigger, Mode=TwoWay}"></view:LabeledSlider>
+            <TextBlock Margin="20 0 0 00" Width="100" TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center" Background="Transparent" Text="{Binding HapticPulseInfo}" ></TextBlock>
+        </StackPanel>
+
+        <!-- HMD specific controls -->
+        <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Stretch" Margin="10"  Visibility="{Binding IsControllingHeadTracking, Converter={StaticResource BoolToVisibilityConverter}}">
+            <Button Content="Recenter view" Height="40" Width="100" Command="{Binding Recenter}"></Button>
+            <Button Content="Reset async offset" Height="40" Width="100" Margin="10 0 0 0" Command="{Binding ResetAsync}"></Button>
         </StackPanel>
     </Grid>
 </Window>

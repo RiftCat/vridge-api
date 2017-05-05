@@ -1,25 +1,44 @@
-﻿using System.Windows.Media.Media3D;
+﻿using System;
+using System.Diagnostics;
+using System.Threading;
+using System.Windows.Media.Media3D;
 using VRE.Vridge.API.Client.Helpers;
-using VRE.Vridge.API.Client.Messages.v1.Controller.OpenVR;
+using VRE.Vridge.API.Client.Messages.OpenVR;
+using VRE.Vridge.API.Client.Messages.v2.Controller;
+using VRE.Vridge.API.Client.Messages.v2.Controller.Requests;
 using VRE.Vridge.API.Client.Proxy.Controller;
 
 namespace VRE.Vridge.API.DesktopTester.Service.Controller
 {
-    class ControllerService
+    class ControllerService : IDisposable
     {
         private readonly ControllerProxy proxy;
 
-        private uint packetNum = 0;        
+        private uint packetNum = 0;
+        private VRController controllerState;
+        private bool isActive = true;
+
+        private readonly AutoResetEvent controllerStateChangeWaitHandle = new AutoResetEvent(false);
 
         public ControllerService(ControllerProxy proxy)
         {
             this.proxy = proxy;
+
+            var sendingThread = new Thread(StateSendingLoop)
+            {
+                IsBackground = true
+            };
+
+            // Set initial state
+            SetControllerState(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false);
+
+            sendingThread.Start();            
         }
 
         /// <summary>
         /// Sends full controller state as defined by arguments.
         /// </summary>        
-        public void SendControllerState(
+        public void SetControllerState(
             // Controller ID
             int controllerId, 
 
@@ -61,15 +80,36 @@ namespace VRE.Vridge.API.DesktopTester.Service.Controller
 
             };
 
-            var controller = new VRController()
+            controllerState = new VRController()
             {
                 ButtonState = buttons,
                 Status = 0,
                 ControllerId = controllerId,
                 OrientationMatrix = BuildControllerMatrix(positionX, positionY, positionZ, yaw, pitch, roll).FlattenAsColumnMajor()
             };
+
+            controllerStateChangeWaitHandle.Set();
+        }
+
+        private void StateSendingLoop()
+        {
+            try
+            {
+                while (isActive)
+                {
+                    proxy.SendControllerData(controllerState);
+                    
+                    // Send state when it was updated or at least once very 1000ms to read haptic feedback
+                    controllerStateChangeWaitHandle.WaitOne(millisecondsTimeout: 1000);
+                }
+            }
+            catch (Exception x)
+            {
+                // Possibly connection crashed or state became corrupted in some way
+                Debug.WriteLine(x);
+                Dispose();
+            }
             
-            proxy.SendControllerData(controller);
         }
 
         /// <summary>
@@ -117,6 +157,11 @@ namespace VRE.Vridge.API.DesktopTester.Service.Controller
             m.Translate(new Vector3D(x, y, z));
 
             return m;
+        }
+
+        public void Dispose()
+        {
+            isActive = false;                        
         }
     }
 }

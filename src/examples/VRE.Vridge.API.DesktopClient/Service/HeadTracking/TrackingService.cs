@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Media.Media3D;
 using VRE.Vridge.API.Client.Helpers;
+using VRE.Vridge.API.Client.Messages.v1;
 using VRE.Vridge.API.Client.Proxy.HeadTracking;
 
 namespace VRE.Vridge.API.DesktopTester.Service.HeadTracking
@@ -15,6 +16,22 @@ namespace VRE.Vridge.API.DesktopTester.Service.HeadTracking
         public TrackingService(HeadTrackingProxy proxy)
         {
             this.proxy = proxy;
+        }
+
+        /// <summary>
+        /// Sets current orientation as new center.
+        /// </summary>
+        public void RecenterView()
+        {
+            proxy.RecenterView();
+        }
+
+        /// <summary>
+        /// Toggles HMD tracking state between "actively tracked" and "out of tracking range".
+        /// </summary>        
+        public void ChangeStatus(bool isCurrentlyBeingTracked)
+        {
+            proxy.ChangeTrackingState(isCurrentlyBeingTracked);
         }
 
         /// <summary>

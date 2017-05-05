@@ -1,11 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using VRE.Vridge.API.Client.Messages;
+using VRE.Vridge.API.Client.Messages.Control;
+using VRE.Vridge.API.Client.Messages.v2.Broadcast;
 using VRE.Vridge.API.Client.Proxy;
+using VRE.Vridge.API.Client.Proxy.Broadcasts;
 using VRE.Vridge.API.DesktopTester.Service.Controller;
 using VRE.Vridge.API.DesktopTester.Service.HeadTracking;
 
@@ -38,6 +43,10 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
         private bool isMenuPressed;
         private bool isSystemPressed;
 
+        // Haptic pulse info
+        private DateTime? lastHapticPulseTime = null;
+        private uint lastHapticPulseLengthUs = 0;
+
         // Which thing is controller by UI (head or controllers)
         private ControlTarget selectedControlTarget;
 
@@ -49,7 +58,12 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
 
         // Helper services
         private TrackingService headTrackingService;
-        private ControllerService controllerService;
+        private ControllerService controllerService;        
+        
+        // Broadcast listener
+        private BroadcastProxy broadcastProxy;
+
+        private bool wasHMDTracked = true;
 
         public ControlViewModel()
         {
@@ -74,6 +88,10 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
             Connect = new RelayCommand(ConnectOrReconnect);
             Status = new RelayCommand(CheckStatus);
             ResetAsync = new RelayCommand(ResetAsyncRotation);
+            Recenter = new RelayCommand(RecenterView);
+
+            // Kill broadcast listener thread on app exit
+            Application.Current.Exit += (sender, args) => apiClient.DisconnectBroadcastProxy();
 
             // Try connecting by default
             ConnectOrReconnect();
@@ -89,6 +107,8 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
 
         public RelayCommand ResetAsync { get; private set; }
 
+        public RelayCommand Recenter { get; private set; }
+
         public Dictionary<ControlTarget, string> ControlTargets { get; }
 
         public Dictionary<TrackingType, string> HeadTrackingModes { get; }        
@@ -97,11 +117,11 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
         {
             get { return selectedControlTarget; }
             set
-            {                
+            {              
                 selectedControlTarget = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(() => IsControllingHeadTracking);
-                RaisePropertyChanged(() => IsControllingControllers);
+                RaisePropertyChanged(() => IsControllingControllers);                
 
             }
         }
@@ -278,6 +298,24 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
             }
         }
 
+        public string HapticPulseInfo
+        {
+            get
+            {
+                if (!lastHapticPulseTime.HasValue)
+                {
+                    return "No haptic pulses received.";
+                }
+                else
+                {
+                    return $"Last haptic pulse:\n" +
+                           $"{lastHapticPulseTime.Value.ToLocalTime()}\n" +
+                           $"({lastHapticPulseLengthUs} us)";
+                }
+            }
+            
+        }        
+
         #endregion
 
         #region Canvas related drawing calculations
@@ -308,13 +346,20 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
                 // Close active connections (if restarting)
                 apiClient.DisconnectHeadTrackingProxy();    
                 apiClient.DisconnectControllerProxy();
+                apiClient.DisconnectBroadcastProxy();
+                controllerService?.Dispose();
 
                 // Give it some time to clean up
                 Thread.Sleep(10);
 
                 // Connect to the services
-                headTrackingService = new TrackingService(apiClient.ConnectHeadTrackingProxy());
+                headTrackingService = new TrackingService(apiClient.ConnectHeadTrackingProxy());                                
                 controllerService = new ControllerService(apiClient.ConnectToControllerProxy());
+
+                broadcastProxy = apiClient.ConnectToBroadcaster();
+                broadcastProxy.HapticPulseReceived += OnHapticFeedbackReceived;
+
+                headTrackingService.ChangeStatus(IsControllingHeadTracking);
             }
             catch (Exception x)
             {
@@ -341,6 +386,11 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
             headTrackingService?.ResetAsyncOffset();
         }
 
+        private void RecenterView()
+        {
+            headTrackingService?.RecenterView();
+        }
+
         private void OnPositionChanged()
         {
             // Notify UI
@@ -357,7 +407,15 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
 
         private void OnControllerStateChanged()
         {
-            SendControllerStateToVridge();
+            UpdateControllerState();
+        }
+
+        private void OnHapticFeedbackReceived(object sender, HapticPulse hapticPulse)
+        {
+            lastHapticPulseLengthUs = hapticPulse.LengthUs;
+            lastHapticPulseTime = DateTime.Now;
+
+            RaisePropertyChanged(() => HapticPulseInfo);           
         }
 
         private void SendCurrentTrackingDataToVridge()
@@ -370,7 +428,7 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
                 }
                 else
                 {
-                    SendControllerStateToVridge();
+                    UpdateControllerState();
                 }
                 
             }
@@ -400,20 +458,37 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            // Mark HMD as in/out of tracking range when it crosses tracking bounds
+            var isHmdTracked = Math.Abs(PositionX) <= 3 && Math.Abs(PositionZ) <= 3;
+            if (wasHMDTracked && !isHmdTracked)
+            {
+                headTrackingService?.ChangeStatus(false);
+                wasHMDTracked = false;
+            }
+
+            if (!wasHMDTracked && isHmdTracked)
+            {
+                headTrackingService?.ChangeStatus(true);
+                wasHMDTracked = true;
+            }
+
+            
         }
 
-        private void SendControllerStateToVridge()
+        private void UpdateControllerState()
         {
             try
             {
                 // Enum members use int as underlying type so each controller has unique ID [1-4]
                 int controllerId = (int) SelectedControlTarget;
 
-                controllerService?.SendControllerState(controllerId,
+                controllerService?.SetControllerState(controllerId,
                     PositionX, PositionY, PositionZ,
                     Yaw, Pitch, Roll,
                     AnalogX, AnalogY, AnalogTrigger, 
                     IsMenuPressed, IsSystemPressed);
+                
             }
             catch (TimeoutException x)
             {
