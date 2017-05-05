@@ -1,6 +1,11 @@
 # v2 note
 Wikis haven't been updated yet. This is a quick overview of upcoming changes.
 
+Key notes:
+* v1 clients remain compatible, new features are available only if you use "2" in ProtocolVersion header during endpoint request.
+* Prerelease build of Riftcat+VRidge is required for these features to work. Use "api" as custom update code in Riftcat's update settings.
+* These changes will be merged to Beta mid-May and to Stable in 2nd half of May.
+
 Haptic feedback:
 
 * Example proxy class: https://github.com/RiftCat/vridge-api/blob/v2-pre/src/VRE.Vridge.API.Client/Proxy/Broadcasts/BroadcastProxy.cs
@@ -19,7 +24,7 @@ WPF desktop tester was updated with controls to test above changes:
 - Last haptic pulse is displayed in controller UI.
 - When HMD marker is dragged in/outside UI canvas the HMD switches its tracking states between "in tracking range"/"not currently tracked".
 
-v1 clients remain compatible, new features are available only if you use "2" in ProtocolVersion header during endpoint request.
+
 
 Above note will be removed once wikis are updated and the branch is merged into main one. This should happen mid-May.
 
