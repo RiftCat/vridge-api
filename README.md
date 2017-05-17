@@ -1,33 +1,3 @@
-# v2 note
-Wikis haven't been updated yet. This is a quick overview of upcoming changes.
-
-Key notes:
-* v1 clients remain compatible, new features are available only if you use "2" in ProtocolVersion header during endpoint request.
-* Prerelease build of Riftcat+VRidge is required for these features to work. Use "api" as custom update code in Riftcat's update settings.
-* These changes will be merged to Beta mid-May and to Stable in 2nd half of May.
-
-Haptic feedback:
-
-* Example proxy class: https://github.com/RiftCat/vridge-api/blob/v2-pre/src/VRE.Vridge.API.Client/Proxy/Broadcasts/BroadcastProxy.cs
-* Struct: https://github.com/RiftCat/vridge-api/blob/v2-pre/src/VRE.Vridge.API.Client/Messages/v2/Broadcast/HapticPulse.cs
-* Connecting: https://github.com/RiftCat/vridge-api/blob/v2-pre/src/VRE.Vridge.API.Client/Proxy/APIClient.cs#L115
-
-Broadcast channel endpoint is requested in the same way as Head Tracking and Controller endpoints, with that difference that multiple clients can connect to broadcast channel (ZMQ PUB-SUB).
-
-Head tracking - recenter & tracking state toggle:
-
-* Updated proxy: https://github.com/RiftCat/vridge-api/blob/v2-pre/src/VRE.Vridge.API.Client/Proxy/HeadTracking/HeadTrackingProxy.cs
-* Updated struct: https://github.com/RiftCat/vridge-api/blob/v2-pre/src/VRE.Vridge.API.Client/Messages/v2/HeadTracking/Requests/HeadTrackingRequest.cs
-
-WPF desktop tester was updated with controls to test above changes:
-- Recenter button.
-- Last haptic pulse is displayed in controller UI.
-- When HMD marker is dragged in/outside UI canvas the HMD switches its tracking states between "in tracking range"/"not currently tracked".
-
-
-
-Above note will be removed once wikis are updated and the branch is merged into main one. This should happen mid-May.
-
 # Quick description
 
 VRidge API is a way to interact with VRidge in any language of your choice. We use ZeroMQ sockets as a low latency transport. It can work both locally and remotely through network. 
@@ -80,3 +50,16 @@ See [Controller API](https://github.com/RiftCat/vridge-api/wiki/Controller-API) 
 Head tracking endpoint allows you to control head tracking in a variety of modes. You can use it to provide positional, rotatioanal or combined data. You can also read mobile sensor data and provide an offset. You can also modify phone tracking data in real time before it's used for rendering in VR. 
 
 See [Head Tracking API](https://github.com/RiftCat/vridge-api/wiki/Head-Tracking-API) for protocol and available modes
+
+Broadcast endpoint carries one-way notifcations. Currently only haptic pulses are propagated through broadcast channel. It is implemented as ZMQ PUB-SUB sockets.
+
+See [Listening to broadcasts](https://github.com/RiftCat/vridge-api/wiki/Listening-to-haptic-feedback).
+
+## Changes
+
+### v2 (beta)
+
+* Currently available in beta channel, scheduled to be moved to stable branch by the end of May.
+* Added haptic pulses as PUB-SUB sockets.
+* Added recenter head tracking call to mirror recenter hotkey function.
+* Added ChangeState to flag HMD as inside/outside of tracking range.
