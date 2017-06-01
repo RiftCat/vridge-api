@@ -11,7 +11,6 @@ Everything is loaded as single VRidge OpenVR driver. Some of the above things ca
 ## General requirements 
 * ZeroMQ (or any lib that communicate with ZMQ sockets)
 * JSON serializer
-* API-enabled version of RiftCat (use **beta** channel in RiftCat update settings)
 
 VRidge API is accessible over TCP, abstracted by ZeroMQ sockets. This allows you to use API any any language that you choose. See [ZeroMQ language bindings](http://zeromq.org/bindings:_start) page and get library for language of your choice.
 
@@ -57,9 +56,8 @@ See [Listening to broadcasts](https://github.com/RiftCat/vridge-api/wiki/Listeni
 
 ## Changes
 
-### v2 (beta)
+### v2
 
-* Currently available in beta channel, scheduled to be moved to stable branch by the end of May.
 * Added haptic pulses as PUB-SUB sockets.
 * Added recenter head tracking call to mirror recenter hotkey function.
 * Added ChangeState to flag HMD as inside/outside of tracking range.
