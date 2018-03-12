@@ -1,0 +1,50 @@
+syntax = "proto2";
+
+option java_package = "com.riftcat.vridge.api.client.java";
+option optimize_for = LITE_RUNTIME;
+
+message ControllerStateRequest {
+   optional int32 Version = 1 [default = 0];
+   optional uint32 TaskType = 2 [default = 0];
+   optional uint32 Origin = 3 [default = 0];
+   optional VRController ControllerState = 4;
+}
+message ControllerStateResponse {
+   optional int32 Version = 1 [default = 0];
+   optional uint32 ReplyCode = 2 [default = 0];
+}
+message HapticPulse {
+   optional int32 ControllerId = 1 [default = 0];
+   optional uint32 LengthUs = 2 [default = 0];
+   optional uint32 TimestampUs = 3 [default = 0];
+}
+message HeadTrackingRequest {
+   optional int32 Version = 1 [default = 0];
+   optional uint32 TaskType = 2 [default = 0];
+   optional bytes Data = 3;
+}
+message HeadTrackingResponse {
+   optional int32 Version = 1 [default = 0];
+   optional uint32 ReplyCode = 2 [default = 0];
+   repeated float Data = 3;
+}
+message VRController {
+   optional int32 ControllerId = 1 [default = 0];
+   optional int32 Status = 2 [default = 0];
+   repeated float OrientationMatrix = 3;
+   optional VRControllerState_t ButtonState = 4;
+}
+message VRControllerAxis_t {
+   optional float x = 1 [default = 0];
+   optional float y = 2 [default = 0];
+}
+message VRControllerState_t {
+   optional uint32 unPacketNum = 1 [default = 0];
+   optional uint64 ulButtonPressed = 2 [default = 0];
+   optional uint64 ulButtonTouched = 3 [default = 0];
+   optional VRControllerAxis_t rAxis0 = 4;
+   optional VRControllerAxis_t rAxis1 = 5;
+   optional VRControllerAxis_t rAxis2 = 7;
+   optional VRControllerAxis_t rAxis3 = 8;
+   optional VRControllerAxis_t rAxis4 = 9;
+}
