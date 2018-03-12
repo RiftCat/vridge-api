@@ -12,7 +12,7 @@ Everything is loaded as single VRidge OpenVR driver. Some of the above things ca
 * ZeroMQ (or any lib that communicate with ZMQ sockets)
 * JSON serializer
 
-VRidge API is accessible over TCP, abstracted by ZeroMQ sockets. This allows you to use API any any language that you choose. See [ZeroMQ language bindings](http://zeromq.org/bindings:_start) page and get library for language of your choice.
+VRidge API is accessible over TCP, abstracted by ZeroMQ sockets. This allows you to use API any language that you choose. See [ZeroMQ language bindings](http://zeromq.org/bindings:_start) page and get library for language of your choice.
 
 ## Requirements for this example
 
@@ -55,11 +55,11 @@ Controller API allows you to send VR motion controller state without writing a f
 
 See [Controller API](https://github.com/RiftCat/vridge-api/wiki/Controller-API) for protocol and details.
 
-Head tracking endpoint allows you to control head tracking in a variety of modes. You can use it to provide positional, rotatioanal or combined data. You can also read mobile sensor data and provide an offset. You can also modify phone tracking data in real time before it's used for rendering in VR. 
+Head tracking endpoint allows you to control head tracking in a variety of modes. You can use it to provide positional, rotational or combined data. You can also read mobile sensor data and provide an offset. You can also modify phone tracking data in real time before it's used for rendering in VR. 
 
 See [Head Tracking API](https://github.com/RiftCat/vridge-api/wiki/Head-Tracking-API) for protocol and available modes
 
-Broadcast endpoint carries one-way notifcations. Currently only haptic pulses are propagated through broadcast channel. It is implemented as ZMQ PUB-SUB sockets.
+Broadcast endpoint carries one-way notifications. Currently only haptic pulses are propagated through broadcast channel. It is implemented as ZMQ PUB-SUB sockets.
 
 See [Listening to broadcasts](https://github.com/RiftCat/vridge-api/wiki/Listening-to-haptic-feedback).
 
