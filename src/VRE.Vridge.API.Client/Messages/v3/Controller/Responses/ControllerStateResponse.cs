@@ -1,11 +1,15 @@
 ﻿using System.Runtime.InteropServices;
+using ProtoBuf;
 
-namespace VRE.Vridge.API.Client.Messages.v1.Controller.Responses
+namespace VRE.Vridge.API.Client.Messages.v3.Controller.Responses
 {
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    [ProtoContract]
     public struct ControllerStateResponse
     {        
+        [ProtoMember(1)]
         public int Version;
+
+        [ProtoMember(2)]
         public byte ReplyCode;
 
         public enum Response

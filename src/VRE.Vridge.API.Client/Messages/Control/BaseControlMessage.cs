@@ -1,9 +1,17 @@
-﻿namespace VRE.Vridge.API.Client.Messages.Control
+﻿using ProtoBuf;
+
+
+namespace VRE.Vridge.API.Client.Messages.Control
 {
     public class BaseControlMessage
     {
-        public int ProtocolVersion = 2;
+        public int ProtocolVersion;
         public int Code;
+        
+        public BaseControlMessage(int versionCode)
+        {
+            ProtocolVersion = versionCode;
+        }
         
     }
 }

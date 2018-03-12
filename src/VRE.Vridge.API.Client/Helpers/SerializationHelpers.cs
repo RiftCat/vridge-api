@@ -1,7 +1,9 @@
 ﻿using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using NetMQ;
 using Newtonsoft.Json;
+using ProtoBuf;
 
 namespace VRE.Vridge.API.Client.Helpers
 {
@@ -57,6 +59,50 @@ namespace VRE.Vridge.API.Client.Helpers
         /// <summary>
         /// Converts given structure to byte array.
         /// </summary>        
+        public static byte[] ProtoSerialize(object obj)
+        {
+            using (var ms = new MemoryStream())
+            {
+                Serializer.Serialize(ms, obj);
+                return ms.ToArray();
+            }
+        }
+
+        /// <summary>
+        /// Converts given byte array to structure T.
+        /// </summary>        
+        public static T ProtoDeserialize<T>(byte[] data)
+        {
+            using (var ms = new MemoryStream(data))
+            {
+                return Serializer.Deserialize<T>(ms);
+            }
+        }
+
+        /// <summary>
+        /// Converts structure to pointer. Caller needs to free IntPtr.
+        /// </summary>        
+        public static IntPtr StructureToIntPtr(object str, out int size)
+        {
+            size = Marshal.SizeOf(str);
+            IntPtr ptr = Marshal.AllocHGlobal(size);
+            Marshal.StructureToPtr(str, ptr, false);            
+            return ptr;
+        }
+
+        /// <summary>
+        /// Converts array to pointer. Caller needs to free IntPtr.
+        /// </summary>        
+        public static IntPtr ArrayToIntPtr(byte[] array)
+        {            
+            IntPtr ptr = Marshal.AllocHGlobal(array.Length);
+            Marshal.Copy(array, 0, ptr, array.Length);
+            return ptr;
+        }
+
+        /// <summary>
+        /// Converts given structure to byte array.
+        /// </summary>        
         public static byte[] StructureToByteArray(object str)
         {
             int size = Marshal.SizeOf(str);
@@ -79,27 +125,6 @@ namespace VRE.Vridge.API.Client.Helpers
             pin.Free();
 
             return packet;
-        }
-
-        /// <summary>
-        /// Converts structure to pointer. Caller needs to free IntPtr.
-        /// </summary>        
-        public static IntPtr StructureToIntPtr(object str, out int size)
-        {
-            size = Marshal.SizeOf(str);
-            IntPtr ptr = Marshal.AllocHGlobal(size);
-            Marshal.StructureToPtr(str, ptr, false);            
-            return ptr;
-        }
-
-        /// <summary>
-        /// Converts array to pointer. Caller needs to free IntPtr.
-        /// </summary>        
-        public static IntPtr ArrayToIntPtr(byte[] array)
-        {            
-            IntPtr ptr = Marshal.AllocHGlobal(array.Length);
-            Marshal.Copy(array, 0, ptr, array.Length);
-            return ptr;
         }
     }
 }

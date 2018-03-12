@@ -1,13 +1,11 @@
-﻿using VRE.Vridge.API.Client.Proxy;
+﻿using System;
+using VRE.Vridge.API.Client.Proxy;
 
 namespace VRE.Vridge.API.Client.Messages.Control.Responses
 {
     public class EndpointCreated : ControlResponseHeader
     {
-        /// <summary>
-        /// ZMQ REP server will await at this address. Use REQ socket to create connection.
-        /// </summary>
-        public string EndpointAddress { get; set; }
+        public int Port { get; set; }
 
         /// <summary>
         /// Timeout after which the API server will disconnect you after not sending data for given amount of seconds.

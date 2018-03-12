@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Windows.Media.Media3D;
 using VRE.Vridge.API.Client.Helpers;
-using VRE.Vridge.API.Client.Messages.v1;
 using VRE.Vridge.API.Client.Proxy.HeadTracking;
 
 namespace VRE.Vridge.API.DesktopTester.Service.HeadTracking
 {
-    public class TrackingService
+    public class TrackingService : IDisposable
     {               
         private readonly HeadTrackingProxy proxy;
 
@@ -173,6 +172,11 @@ namespace VRE.Vridge.API.DesktopTester.Service.HeadTracking
         private void OnSyncDisconnect(object sender, Exception e)
         {
             StopSyncOffsetMode();
+        }
+
+        public void Dispose()
+        {
+            proxy?.Dispose();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace VRE.Vridge.API.Client.Messages.v2
+﻿namespace VRE.Vridge.API.Client.Messages.v3
 {
     public enum TrackedDeviceStatus
     {        

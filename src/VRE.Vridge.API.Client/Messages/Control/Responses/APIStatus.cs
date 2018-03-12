@@ -7,6 +7,6 @@ namespace VRE.Vridge.API.Client.Messages.Control.Responses
     /// </summary>
     public class APIStatus : ControlResponseHeader
     {        
-        public List<EndpointStatus> Endpoints;        
+        public List<EndpointStatus> Endpoints;
     }
 }

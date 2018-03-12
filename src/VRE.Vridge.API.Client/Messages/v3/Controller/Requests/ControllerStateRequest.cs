@@ -1,31 +1,33 @@
 ﻿using System.Runtime.InteropServices;
-using VRE.Vridge.API.Client.Messages.OpenVR;
-using VRE.Vridge.API.Client.Messages.v1.Controller.Responses;
-using VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests;
+using ProtoBuf;
+using VRE.Vridge.API.Client.Messages.v3.Controller.Responses;
 
-namespace VRE.Vridge.API.Client.Messages.v1.Controller.Requests
+
+namespace VRE.Vridge.API.Client.Messages.v3.Controller.Requests
 {
     /// <summary>
     /// Request to a VRidge API server that contains current motion controller state.
-    /// <see cref="ControllerStateResponse"/> will be returned as a response.
+    /// <see cref="ControllerStateResponse"/> will be returned as a response.    
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
-    public struct ControllerRequest 
+    [ProtoContract]    
+    public struct ControllerStateRequest 
     {
-        private const int CurrentVersion = 1;
+        private const int CurrentVersion = 2;
 
+        [ProtoMember(1)]
         public int Version;
 
         /// <summary>
         /// Describes how API should handle the incoming data, see <see cref="ControllerTask"/>.
         /// </summary>
-        [MarshalAs(UnmanagedType.I1)]
+        [ProtoMember(2)]
         public byte TaskType;
 
 
-        [MarshalAs(UnmanagedType.I1)]
+        [ProtoMember(3)]
         public byte Origin;
-                
+        
+        [ProtoMember(4)]
         public VRController ControllerState;
     }
 

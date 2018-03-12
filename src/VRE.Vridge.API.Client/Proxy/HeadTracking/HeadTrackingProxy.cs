@@ -2,13 +2,13 @@
 using System.Threading;
 using NetMQ;
 using VRE.Vridge.API.Client.Helpers;
-using VRE.Vridge.API.Client.Messages.v2;
-using VRE.Vridge.API.Client.Messages.v2.HeadTracking.Requests;
-using VRE.Vridge.API.Client.Messages.v2.HeadTracking.Responses;
+using VRE.Vridge.API.Client.Messages.v3;
+using VRE.Vridge.API.Client.Messages.v3.HeadTracking.Requests;
+using VRE.Vridge.API.Client.Messages.v3.HeadTracking.Responses;
 
 namespace VRE.Vridge.API.Client.Proxy.HeadTracking
 {
-    public class HeadTrackingProxy : ClientProxyBase
+    public class HeadTrackingProxy : ClientProxyBasePB
     {        
         public Action<float[]> NewSyncDataAvailable;
         public event EventHandler<Exception> SyncModeDisconnected;
@@ -181,15 +181,13 @@ namespace VRE.Vridge.API.Client.Proxy.HeadTracking
         {
             HeadTrackingRequest reqModifiable = new HeadTrackingRequest()
             {
-                Version = 2,
-                Data = new byte[64],
-                DataLength = 0,
+                Version = 2,                
                 TaskType = (byte)HeadTrackingRequest.Task.RequestSyncOffset
             };
 
             try
             {
-                var reqFrame = SerializationHelpers.StructureToByteArray(reqModifiable);
+                var reqFrame = SerializationHelpers.ProtoSerialize(reqModifiable);
 
                 while (isProvidingOffset)
                 {

@@ -8,9 +8,11 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using VRE.Vridge.API.Client.Messages;
 using VRE.Vridge.API.Client.Messages.Control;
-using VRE.Vridge.API.Client.Messages.v2.Broadcast;
+using VRE.Vridge.API.Client.Messages.v3.Broadcast;
 using VRE.Vridge.API.Client.Proxy;
 using VRE.Vridge.API.Client.Proxy.Broadcasts;
+using VRE.Vridge.API.Client.Proxy.Controller;
+using VRE.Vridge.API.Client.Proxy.HeadTracking;
 using VRE.Vridge.API.DesktopTester.Service.Controller;
 using VRE.Vridge.API.DesktopTester.Service.HeadTracking;
 
@@ -42,6 +44,7 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
         // State of OpenVR buttons as stored by ToggleButtons in controller panel
         private bool isMenuPressed;
         private bool isSystemPressed;
+        private bool isTriggerPressed;
 
         // Haptic pulse info
         private DateTime? lastHapticPulseTime = null;
@@ -54,7 +57,7 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
         private TrackingType selectedHeadTrackingMode;
         
         // API client         
-        private readonly APIClient apiClient = new APIClient();
+        private readonly APIClient apiClient = new APIClient("Desktop Tester");
 
         // Helper services
         private TrackingService headTrackingService;
@@ -91,7 +94,7 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
             Recenter = new RelayCommand(RecenterView);
 
             // Kill broadcast listener thread on app exit
-            Application.Current.Exit += (sender, args) => apiClient.DisconnectBroadcastProxy();
+            Application.Current.Exit += (sender, args) => broadcastProxy?.Dispose();
 
             // Try connecting by default
             ConnectOrReconnect();
@@ -298,6 +301,17 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
             }
         }
 
+        public bool IsTriggerPressed
+        {
+            get { return isTriggerPressed; }
+            set
+            {
+                isTriggerPressed = value;
+                RaisePropertyChanged();
+                OnControllerStateChanged();
+            }
+        }
+
         public string HapticPulseInfo
         {
             get
@@ -344,19 +358,18 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
             try
             {
                 // Close active connections (if restarting)
-                apiClient.DisconnectHeadTrackingProxy();    
-                apiClient.DisconnectControllerProxy();
-                apiClient.DisconnectBroadcastProxy();
+                headTrackingService?.Dispose();
                 controllerService?.Dispose();
+                broadcastProxy?.Dispose();                
 
                 // Give it some time to clean up
                 Thread.Sleep(10);
 
                 // Connect to the services
-                headTrackingService = new TrackingService(apiClient.ConnectHeadTrackingProxy());                                
-                controllerService = new ControllerService(apiClient.ConnectToControllerProxy());
+                headTrackingService = new TrackingService(apiClient.CreateProxy<HeadTrackingProxy>());
+                controllerService = new ControllerService(apiClient.CreateProxy<ControllerProxy>());
 
-                broadcastProxy = apiClient.ConnectToBroadcaster();
+                broadcastProxy = apiClient.CreateProxy<BroadcastProxy>();
                 broadcastProxy.HapticPulseReceived += OnHapticFeedbackReceived;
 
                 headTrackingService.ChangeStatus(IsControllingHeadTracking);
@@ -487,7 +500,7 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
                     PositionX, PositionY, PositionZ,
                     Yaw, Pitch, Roll,
                     AnalogX, AnalogY, AnalogTrigger, 
-                    IsMenuPressed, IsSystemPressed);
+                    IsMenuPressed, IsSystemPressed, isTriggerPressed);
                 
             }
             catch (TimeoutException x)

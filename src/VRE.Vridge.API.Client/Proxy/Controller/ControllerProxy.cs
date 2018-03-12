@@ -4,16 +4,16 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using NetMQ;
 using VRE.Vridge.API.Client.Messages.OpenVR;
-using VRE.Vridge.API.Client.Messages.v2.Controller;
-using VRE.Vridge.API.Client.Messages.v2.Controller.Requests;
-using VRE.Vridge.API.Client.Messages.v2.Controller.Responses;
+using VRE.Vridge.API.Client.Messages.v3.Controller;
+using VRE.Vridge.API.Client.Messages.v3.Controller.Requests;
+using VRE.Vridge.API.Client.Messages.v3.Controller.Responses;
 
 
 namespace VRE.Vridge.API.Client.Proxy.Controller
 {
-    public class ControllerProxy : ClientProxyBase
+    public class ControllerProxy : ClientProxyBasePB
     {
-        private ControllerRequest controller;
+        private ControllerStateRequest controller;
 
         /// <summary>
         /// Creates controller proxy and establishes connection. 
@@ -27,7 +27,7 @@ namespace VRE.Vridge.API.Client.Proxy.Controller
         public ControllerProxy(string endpointAddress, bool keepAlive = false)
             : base(endpointAddress, keepAlive)
         {
-            controller = new ControllerRequest()
+            controller = new ControllerStateRequest()
             {
                 Version = 2,
                 Origin = (byte) ControllerOrigin.Zero,
@@ -50,7 +50,7 @@ namespace VRE.Vridge.API.Client.Proxy.Controller
         /// </summary>
         public void Disconnect()
         {            
-            var disconnectRequest = new ControllerRequest()
+            var disconnectRequest = new ControllerStateRequest()
             {
                 Version = 2,
                 TaskType = (byte)ControllerTask.Disconnect

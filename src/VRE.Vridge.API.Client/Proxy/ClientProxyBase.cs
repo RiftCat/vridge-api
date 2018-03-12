@@ -7,26 +7,24 @@ using VRE.Vridge.API.Client.Helpers;
 
 namespace VRE.Vridge.API.Client.Proxy
 {
-    public class ClientProxyBase
+    public class ClientProxyBase : IDisposable
     {        
-        private readonly RequestSocket socket;        
-        private readonly Timer keepAliveTimer;
-        private readonly byte[] keepAlivePing = { 0 };
+        protected bool AutoRestartOnTimeout = false;                        
+
+        private readonly string endpointAddress;
+        private readonly bool shouldKeepAlive;
+
+        private Timer keepAliveTimer;
+
+        private RequestSocket socket;
+        
 
         protected ClientProxyBase(string endpointAddress, bool keepAlive = false)
         {
-            socket = new RequestSocket();         
-            socket.Options.Linger = TimeSpan.FromSeconds(1);   
-            socket.Connect(endpointAddress);
-            
-            if (!keepAlive) return;
+            this.endpointAddress = endpointAddress;
+            this.shouldKeepAlive = keepAlive;
 
-            /* Very basic keep alive mechanism
-             * generally you should provide a steady stream of data yourself 
-             * or reconnect after a period if inactivity */
-            keepAliveTimer = new Timer(5000);
-            keepAliveTimer.Elapsed += (s, e) => SendKeepAlivePing();
-            keepAliveTimer.Start();
+            CreateSocket();                        
         }
 
         /// <summary>
@@ -35,10 +33,10 @@ namespace VRE.Vridge.API.Client.Proxy
         /// </summary>        
         public T OptimisticSendMessage<T>(object msg)
         {
-            socket.SendFrame(SerializationHelpers.StructureToByteArray(msg));
+            socket.SendFrame(Serialize(msg));
             var reply = socket.ReceiveFrameBytes();            
 
-            return SerializationHelpers.ByteArrayToStructure<T>(reply);
+            return Deserialize<T>(reply);
         }
 
         /// <summary>
@@ -50,16 +48,15 @@ namespace VRE.Vridge.API.Client.Proxy
         {
             byte[] reply;
 
-            socket.SendFrame(SerializationHelpers.StructureToByteArray(msg));
+            socket.SendFrame(Serialize(msg));
             var success = socket.TryReceiveFrameBytes(TimeSpan.FromMilliseconds(timeoutMs), out reply);
 
             if (success)
             {
-                return SerializationHelpers.ByteArrayToStructure<T>(reply);
+                return Deserialize<T>(reply);
             }
 
-            socket.Close();
-            throw new TimeoutException();            
+            throw Timeout();            
         }
 
         /// <summary>
@@ -77,11 +74,10 @@ namespace VRE.Vridge.API.Client.Proxy
 
             if (success)
             {
-                return SerializationHelpers.ByteArrayToStructure<T>(reply);
+                return Deserialize<T>(reply);
             }
 
-            socket.Close();
-            throw new TimeoutException();
+            throw Timeout();            
         }
 
         /// <summary>
@@ -90,8 +86,38 @@ namespace VRE.Vridge.API.Client.Proxy
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void SendKeepAlivePing()
         {
-            socket.SendFrame(keepAlivePing);
+            socket.SendFrame(new byte[]{0});
             socket.ReceiveFrameBytes();
+        }
+
+        private void CreateSocket()
+        {
+            socket = new RequestSocket();
+            socket.Options.Linger = TimeSpan.FromSeconds(1);
+            socket.Connect(endpointAddress);
+
+            if (!shouldKeepAlive) return;
+
+            /* Very basic keep alive mechanism
+             * generally you should provide a steady stream of data yourself 
+             * or reconnect after a period if inactivity */
+            keepAliveTimer = new Timer(5000);
+            keepAliveTimer.Elapsed += (s, e) => SendKeepAlivePing();
+            keepAliveTimer.Start();
+        }
+
+        private TimeoutException Timeout()
+        {
+            socket.Close();
+            keepAliveTimer?.Stop();
+
+            if (AutoRestartOnTimeout)
+            {
+                socket.Dispose();
+                CreateSocket();
+            }
+
+            return new TimeoutException();
         }
 
 
@@ -99,6 +125,21 @@ namespace VRE.Vridge.API.Client.Proxy
         {
             keepAliveTimer?.Stop();
             socket.Dispose();
+        }
+
+        protected virtual byte[] Serialize(object o)
+        {
+            return SerializationHelpers.StructureToByteArray(o);
+        }
+
+        protected virtual T Deserialize<T>(byte[] array)
+        {
+            return SerializationHelpers.ByteArrayToStructure<T>(array);
+        }
+
+        public void Dispose()
+        {
+            CloseSocket();            
         }
     }
 }

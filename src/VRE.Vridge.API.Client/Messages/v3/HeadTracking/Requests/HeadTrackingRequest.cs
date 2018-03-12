@@ -1,40 +1,37 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using VRE.Vridge.API.Client.Messages.v1.HeadTracking.Responses;
+using ProtoBuf;
+using VRE.Vridge.API.Client.Messages.v3.HeadTracking.Responses;
 
-namespace VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests
+namespace VRE.Vridge.API.Client.Messages.v3.HeadTracking.Requests
 {
     /// <summary>
     /// Request to a VRidge API server that contains head tracking data or queries.
-    /// <see cref="HeadTrackingResponse"/> will be returned as a response.
+    /// <see cref="HeadTrackingResponse"/> will be returned as a response.   
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    [ProtoContract]
     public struct HeadTrackingRequest
     {
-        private const int CurrentVersion = 1;
+        private const int CurrentVersion = 2;
 
         /// <summary>
-        /// Should always be 1 for v1
+        /// Should always be 3 for v3
         /// </summary>
+        [ProtoMember(1)]
         public int Version;
 
         /// <summary>
         /// Describes how API should handle the incoming data, see <see cref="Task"/>.
-        /// </summary>
-        [MarshalAs(UnmanagedType.I1)]
+        /// </summary>        
+        [ProtoMember(2)]
         public byte TaskType;
 
         /// <summary>
-        /// Length of actual data in next array
-        /// </summary>
-        public int DataLength;
-
-        /// <summary>
-        /// Tracking data itself, padded into 64 bytes. Use DataLength to mark actual data length.
-        /// </summary>
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
+        /// Tracking data itself.
+        /// </summary>        
+        [ProtoMember(3)]
         public byte[] Data;
-
+        
         /// <summary>
         /// Task stored in <see cref="HeadTrackingRequest.TaskType"/> defines what kind of data the packet is carrying.
         /// <remarks>
@@ -51,6 +48,11 @@ namespace VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests
             /// Packet closes your head tracking API connection and lets other clients use it.
             /// </summary>
             Disconnect = 255,
+
+            /// <summary>
+            /// Changes state of tracked device. Data[0] contains a byte representing TrackedDeviceStatus.
+            /// </summary>
+            ChangeState = 254,
 
             /// <summary>
             /// <see cref="Data"/> contains 4x4 float matrix but only rotation component is used 
@@ -95,6 +97,11 @@ namespace VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests
             SendPositionOnly = 5,
 
             /// <summary>
+            /// Sets current orientation as absolute center.
+            /// </summary>
+            Recenter = 50,
+
+            /// <summary>
             /// Requests a response with current rotation data so the client can modify it. 
             /// This will prevent mobile data from reaching VR so you need to use any 
             /// Send* (0-6) packet as next req to keep the tracking data flowing.
@@ -121,7 +128,7 @@ namespace VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests
             /// Delete stored async offset that was previously provided with
             /// <see cref="ProvideAsyncRotationOffsetAsVector"/>
             /// </summary>
-            ResetAsyncOffset = 210
+            ResetAsyncOffset = 210           
         }
 
         /// <summary>
@@ -133,12 +140,11 @@ namespace VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests
             var packet = new HeadTrackingRequest()
             {
                 Version = CurrentVersion,
-                TaskType = (int)Task.SendPositionOnly,
-                Data = new byte[64],
-                DataLength = 12
+                TaskType = (int)Task.SendPositionOnly,                
+                Data = new byte[12],
             };
 
-            Buffer.BlockCopy(new[] { x, y, z }, 0, packet.Data, 0, 12);
+            Buffer.BlockCopy(new [] { x, y, z }, 0, packet.Data, 0, 12);
 
             return packet;
         }
@@ -153,9 +159,8 @@ namespace VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests
             var packet = new HeadTrackingRequest()
             {
                 Version = CurrentVersion,
-                TaskType = (int)Task.SendRadRotationAndPosition,
-                Data = new byte[64],
-                DataLength = 24
+                TaskType = (int)Task.SendRadRotationAndPosition,                
+                Data = new byte[24],                
             };
 
             Buffer.BlockCopy(new[] { pitch, yaw, roll, x, y, z }, 0, packet.Data, 0, 24);
@@ -173,8 +178,7 @@ namespace VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests
             {
                 Version = CurrentVersion,
                 TaskType = (int)Task.SendPoseMatrixFull,
-                Data = new byte[64],
-                DataLength = 64
+                Data = new byte[64],                
             };
 
             Buffer.BlockCopy(poseMatrix, 0, packet.Data, 0, 64);
@@ -187,19 +191,39 @@ namespace VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests
         /// Rotation is stored indefinitely. It can be reset with <see cref="Task.ResetAsyncOffset"/> packet.
         /// </summary>        
         public static HeadTrackingRequest CreateAsyncOffsetPacket(float yaw, float pitch, float roll)
-        {
+        {            
             var packet = new HeadTrackingRequest()
             {
                 Version = CurrentVersion,
                 TaskType = (int)Task.ProvideAsyncRotationOffsetAsVector,
-                Data = new byte[64],
-                DataLength = 12
+                Data = new byte[12],                
             };
 
-            Buffer.BlockCopy(new[] { pitch, yaw, roll }, 0, packet.Data, 0, 12);
+            Buffer.BlockCopy(new [] {pitch, yaw, roll}, 0, packet.Data, 0, 12);
 
             return packet;
         }
+
+        /// <summary>
+        /// Creates a packet that will set current view orientation as center.
+        /// </summary>
+        /// <returns></returns>
+        public static HeadTrackingRequest CreateRecenterPacket()
+        {
+            return CreateEmptyPacketByType(Task.Recenter);
+        }
+
+        /// <summary>
+        /// Creates a packet that will trigger a state change of HMD. 
+        /// VR runtime will handle the state change according to its rules.
+        /// </summary>        
+        public static HeadTrackingRequest CreateStateChangePacket(TrackedDeviceStatus newStatus)
+        {
+            var packet = CreateEmptyPacketByType(Task.ChangeState);
+            packet.Data = new byte[1];
+            packet.Data[0] = (byte) newStatus;
+            return packet;
+        }        
 
         /// <summary>
         /// Creates an empty packet with a specific task type.
@@ -210,11 +234,11 @@ namespace VRE.Vridge.API.Client.Messages.v1.HeadTracking.Requests
             {
                 Version = CurrentVersion,
                 TaskType = (byte)type,
-                Data = new byte[64],
-                DataLength = 0
-            };
+                Data = null              
+            };            
 
             return packet;
         }
+        
     }
 }

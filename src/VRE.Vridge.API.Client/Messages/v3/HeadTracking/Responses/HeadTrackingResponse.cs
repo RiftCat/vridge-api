@@ -1,18 +1,20 @@
 ﻿using System.Runtime.InteropServices;
+using ProtoBuf;
 
-namespace VRE.Vridge.API.Client.Messages.v2.HeadTracking.Responses
-{
-    /// <summary>
-    /// Upgrade note v1->v2: No changes.
-    /// </summary>
-    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+namespace VRE.Vridge.API.Client.Messages.v3.HeadTracking.Responses
+{        
+    [ProtoContract]
     public struct HeadTrackingResponse
     {
+        [ProtoMember(1)]
         public int Version;
-        public byte ReplyCode;      
-        public int DataLength;
 
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)] public float[] Data;
+        [ProtoMember(2)]
+        public byte ReplyCode;
+
+        [ProtoMember(3)]
+        public float[] Data;
+
         public enum Response
         {
             /// <summary>

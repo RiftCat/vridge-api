@@ -89,7 +89,13 @@
                     <view:LabeledSlider Label="Y" Minimum="-1" Maximum="1" SliderValue="{Binding AnalogY, Mode=TwoWay}"></view:LabeledSlider>
                 </StackPanel>
             </GroupBox>
-            <view:LabeledSlider Width="200" Label="Trigger" Minimum="0" Maximum="1" SliderValue="{Binding AnalogTrigger, Mode=TwoWay}"></view:LabeledSlider>
+            <GroupBox Header="Trigger">
+                <StackPanel Orientation="Vertical">
+                    <view:LabeledSlider Width="200" Label="Trigger" Minimum="0" Maximum="1" SliderValue="{Binding AnalogTrigger, Mode=TwoWay}"></view:LabeledSlider>
+                    <ToggleButton Content="Trigger Pressed" IsChecked="{Binding IsTriggerPressed}"/>
+                </StackPanel>
+            </GroupBox>
+
             <TextBlock Margin="20 0 0 00" Width="100" TextWrapping="Wrap" VerticalAlignment="Center" TextAlignment="Center" Background="Transparent" Text="{Binding HapticPulseInfo}" ></TextBlock>
         </StackPanel>
 

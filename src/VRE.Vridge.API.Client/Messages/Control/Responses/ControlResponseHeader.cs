@@ -17,5 +17,14 @@
         {
             Code = (int) ControlResponseCode.NotAvailable
         };
+
+        public static ControlResponseHeader ResponseServerOutdated = new ControlResponseHeader()
+        {
+            Code = (int)ControlResponseCode.ServerOutdated
+        };
+
+        public ControlResponseHeader() : base(3)
+        {
+        }
     }
 }

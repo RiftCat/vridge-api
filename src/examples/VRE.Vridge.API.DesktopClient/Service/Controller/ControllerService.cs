@@ -4,8 +4,8 @@ using System.Threading;
 using System.Windows.Media.Media3D;
 using VRE.Vridge.API.Client.Helpers;
 using VRE.Vridge.API.Client.Messages.OpenVR;
-using VRE.Vridge.API.Client.Messages.v2.Controller;
-using VRE.Vridge.API.Client.Messages.v2.Controller.Requests;
+using VRE.Vridge.API.Client.Messages.v3.Controller;
+using VRE.Vridge.API.Client.Messages.v3.Controller.Requests;
 using VRE.Vridge.API.Client.Proxy.Controller;
 
 namespace VRE.Vridge.API.DesktopTester.Service.Controller
@@ -30,7 +30,7 @@ namespace VRE.Vridge.API.DesktopTester.Service.Controller
             };
 
             // Set initial state
-            SetControllerState(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false);
+            SetControllerState(1, 0, 0, 0, 0, 0, 0, 0, 0, 0, false, false, false);
 
             sendingThread.Start();            
         }
@@ -61,7 +61,8 @@ namespace VRE.Vridge.API.DesktopTester.Service.Controller
 
             // Button states
             bool isMenuPressed,
-            bool isSystemPressed)
+            bool isSystemPressed,
+            bool isTriggerPressed)
         {
 
             // See openvr.h in OpenVR SDK for mappings and masks
@@ -74,7 +75,7 @@ namespace VRE.Vridge.API.DesktopTester.Service.Controller
                 rAxis2 = new VRControllerAxis_t(0, 0),
                 rAxis3 = new VRControllerAxis_t(0, 0),
                 rAxis4 = new VRControllerAxis_t(0, 0),
-                ulButtonPressed = BuildButtonPressedMask(isMenuPressed, isSystemPressed, analogX),
+                ulButtonPressed = BuildButtonPressedMask(isMenuPressed, isSystemPressed, isTriggerPressed),
                 ulButtonTouched = BuildButtonTouchedMask(true, true), 
                 unPacketNum = ++packetNum
 
@@ -115,10 +116,8 @@ namespace VRE.Vridge.API.DesktopTester.Service.Controller
         /// <summary>
         /// Maps button pressed state into OpenVR packed ulong.
         /// </summary>                
-        private ulong BuildButtonPressedMask(bool isMenuPressed, bool isSystemPressed, double analogX)
+        private ulong BuildButtonPressedMask(bool isMenuPressed, bool isSystemPressed, bool isTriggerPressed)
         {            
-            bool isTriggerPressed = analogX > 0.9f;
-
             ulong mask = 0;
 
             if (isMenuPressed) mask |= ButtonMask.ApplicationMenu;
@@ -161,7 +160,8 @@ namespace VRE.Vridge.API.DesktopTester.Service.Controller
 
         public void Dispose()
         {
-            isActive = false;                        
+            isActive = false;    
+            proxy?.Dispose();                    
         }
     }
 }

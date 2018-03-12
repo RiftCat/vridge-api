@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>VRE.Vridge.API.DesktopTester</RootNamespace>
     <AssemblyName>Vridge API Tester</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -140,16 +140,16 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\VRE.Vridge.API.Client\VRE.Vridge.API.Client.csproj">
-      <Project>{BFA13FB8-CB79-4883-B97E-0BDE7A5A0C2C}</Project>
-      <Name>VRE.Vridge.API.Client</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="icon.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\VRE.Vridge.API.Client\VRE.Vridge.API.Client.csproj">
+      <Project>{11fb8f50-ae40-42c2-ac82-7a8d84a7b76e}</Project>
+      <Name>VRE.Vridge.API.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

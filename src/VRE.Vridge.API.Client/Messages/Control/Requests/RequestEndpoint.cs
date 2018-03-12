@@ -4,10 +4,13 @@
     {        
         public string RequestedEndpointName;
 
-        public RequestEndpoint(string name)
+        public string RequestingAppName;
+
+        public RequestEndpoint(string name, string requestingAppName)
         {
             Code = (int) ControlRequestCode.RequestEndpoint;
             RequestedEndpointName = name;
+            RequestingAppName = requestingAppName;
         }
     }
 }

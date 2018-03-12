@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 using System.Timers;
 using NetMQ;
 using NetMQ.Sockets;
-using VRE.Vridge.API.Client.Messages.v2.Broadcast;
+using VRE.Vridge.API.Client.Messages.v3.Broadcast;
 
 namespace VRE.Vridge.API.Client.Proxy.Broadcasts
 {
-    public class BroadcastProxy
+    public class BroadcastProxy : IDisposable
     {
         private readonly SubscriberSocket socket;
         private readonly NetMQPoller poller;
@@ -30,7 +30,7 @@ namespace VRE.Vridge.API.Client.Proxy.Broadcasts
 
         public void Disconnect()
         {
-            poller.StopAsync();
+            poller.Stop();
             socket.Close();
             HapticPulseReceived = null;
         }
@@ -42,9 +42,14 @@ namespace VRE.Vridge.API.Client.Proxy.Broadcasts
 
             if (topic == "haptic")
             {
-                var hapticPulse = Helpers.SerializationHelpers.ByteArrayToStructure<HapticPulse>(msg);
+                var hapticPulse = Helpers.SerializationHelpers.ProtoDeserialize<HapticPulse>(msg);
                 HapticPulseReceived?.Invoke(this, hapticPulse);
             }
-        }        
+        }
+
+        public void Dispose()
+        {
+            Disconnect();
+        }
     }
 }
