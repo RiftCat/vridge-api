@@ -22,7 +22,16 @@ C# projects require:
 
 * NetMQ
 * Newtonsoft.Json
-* MvvmLight (for WPF example project - /src/examples/VRE.Vridge.API.DesktopClient)
+* .NET Standard 2.0 compatible project - one of the following
+    * .NET Framework 4.6.1 +
+    * .NET Core 2.0 +
+    * Mono 5.4 +
+    * UWP 10.0.16299 +
+    * Xamarin
+        * iOS 10.14 +
+        * Mac 3.8 
+        * Android 8.0 +
+* MvvmLight (only for WPF example project - /src/examples/VRE.Vridge.API.DesktopClient)
 
 Both are referenced as NuGet packages in .csproj and will be restored on pre-build.
 
@@ -56,7 +65,15 @@ See [Listening to broadcasts](https://github.com/RiftCat/vridge-api/wiki/Listeni
 
 ## Changes
 
-### v2
+### API v3 (VRidge 2.0+)
+* Added velocity and acceleration to controller data packets.
+* Migrated protocol to Protobuf serialization scheme to make it easier to write cross-platform code.
+* Migrated client library to .NET Standard 2.0 to make the SDK cross-platform.
+* Updated WPF example to use v3.
+* Fixed a bug that prevented remote connections without the issue #6 workaround.
+* Removed v1 and v2 definitions from the project. VRidge runtime still supports projects using those versions but we recommend using v3 for new projects.
+
+### API v2 (VRidge 1.5)
 
 * Added haptic pulses as PUB-SUB sockets.
 * Added recenter head tracking call to mirror recenter hotkey function.
