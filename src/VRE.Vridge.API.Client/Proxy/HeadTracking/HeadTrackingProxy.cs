@@ -9,7 +9,9 @@ using VRE.Vridge.API.Client.Messages.v3.HeadTracking.Responses;
 namespace VRE.Vridge.API.Client.Proxy.HeadTracking
 {
     public class HeadTrackingProxy : ClientProxyBasePB
-    {        
+    {
+        private const int CurrentVersion = 3;
+
         public Action<float[]> NewSyncDataAvailable;
         public event EventHandler<Exception> SyncModeDisconnected;
 
@@ -158,7 +160,7 @@ namespace VRE.Vridge.API.Client.Proxy.HeadTracking
 
             var disconnectRequest = new HeadTrackingRequest()
             {
-                Version = 2,
+                Version = CurrentVersion,
                 TaskType = (byte) HeadTrackingRequest.Task.Disconnect,                
             };
 
@@ -181,7 +183,7 @@ namespace VRE.Vridge.API.Client.Proxy.HeadTracking
         {
             HeadTrackingRequest reqModifiable = new HeadTrackingRequest()
             {
-                Version = 2,                
+                Version = CurrentVersion,                
                 TaskType = (byte)HeadTrackingRequest.Task.RequestSyncOffset
             };
 

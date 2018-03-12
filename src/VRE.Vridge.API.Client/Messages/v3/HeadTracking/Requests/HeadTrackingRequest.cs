@@ -12,7 +12,7 @@ namespace VRE.Vridge.API.Client.Messages.v3.HeadTracking.Requests
     [ProtoContract]
     public struct HeadTrackingRequest
     {
-        private const int CurrentVersion = 2;
+        private const int CurrentVersion = 3;
 
         /// <summary>
         /// Should always be 3 for v3

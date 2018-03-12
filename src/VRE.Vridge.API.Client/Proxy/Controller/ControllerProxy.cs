@@ -12,8 +12,8 @@ using VRE.Vridge.API.Client.Messages.v3.Controller.Responses;
 namespace VRE.Vridge.API.Client.Proxy.Controller
 {
     public class ControllerProxy : ClientProxyBasePB
-    {
-        private ControllerStateRequest controller;
+    {    
+        private ControllerStateRequest controller;        
 
         /// <summary>
         /// Creates controller proxy and establishes connection. 
@@ -29,7 +29,6 @@ namespace VRE.Vridge.API.Client.Proxy.Controller
         {
             controller = new ControllerStateRequest()
             {
-                Version = 2,
                 Origin = (byte) ControllerOrigin.Zero,
                 TaskType = (byte) ControllerTask.SendFullState          
             };
@@ -51,8 +50,7 @@ namespace VRE.Vridge.API.Client.Proxy.Controller
         public void Disconnect()
         {            
             var disconnectRequest = new ControllerStateRequest()
-            {
-                Version = 2,
+            {                
                 TaskType = (byte)ControllerTask.Disconnect
             };
 

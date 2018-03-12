@@ -12,7 +12,7 @@ namespace VRE.Vridge.API.Client.Messages.v3.Controller.Requests
     [ProtoContract]    
     public struct ControllerStateRequest 
     {
-        private const int CurrentVersion = 2;
+        private const int CurrentVersion = 3;
 
         [ProtoMember(1)]
         public int Version;
