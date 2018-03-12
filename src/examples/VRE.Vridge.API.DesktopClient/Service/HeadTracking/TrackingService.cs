@@ -153,18 +153,15 @@ namespace VRE.Vridge.API.DesktopTester.Service.HeadTracking
                 poseMatrix[1], poseMatrix[5], poseMatrix[9], poseMatrix[13],
                 poseMatrix[2], poseMatrix[6], poseMatrix[10], poseMatrix[14],
                 poseMatrix[3], poseMatrix[8], poseMatrix[11], poseMatrix[15]
-                );
-
-            // Now we combine our offset with phone pose (only rotations are used by both matrices)
-            var combinedMatrix = Matrix3D.Multiply(currentData, offsetMatrix);
+                );            
 
             // Override position with absolutely placed position
-            combinedMatrix.OffsetX = position.X;
-            combinedMatrix.OffsetY = position.Y;
-            combinedMatrix.OffsetZ = position.Z;                        
+            currentData.OffsetX = position.X;
+            currentData.OffsetY = position.Y;
+            currentData.OffsetZ = position.Z;                        
 
             // Override original matrix data with our modified matrix
-            Array.Copy(combinedMatrix.FlattenAsColumnMajor(), poseMatrix, 16);
+            Array.Copy(currentData.FlattenAsColumnMajor(), poseMatrix, 16);
 
             // Arrays are passed by reference so calling method will have modified data
         }

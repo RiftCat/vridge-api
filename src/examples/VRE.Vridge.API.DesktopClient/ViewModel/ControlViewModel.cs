@@ -124,14 +124,20 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
                 selectedControlTarget = value;
                 RaisePropertyChanged();
                 RaisePropertyChanged(() => IsControllingHeadTracking);
-                RaisePropertyChanged(() => IsControllingControllers);                
-
+                RaisePropertyChanged(() => IsControllingControllers);
+                RaisePropertyChanged(() => IsRotationalControlVisible);
+                RaisePropertyChanged(() => IsPositionalControlVisible);
             }
         }
 
         public bool IsControllingHeadTracking => SelectedControlTarget == ControlTarget.Head;
 
         public bool IsControllingControllers => SelectedControlTarget != ControlTarget.Head;
+
+        public bool IsRotationalControlVisible => SelectedHeadTrackingMode != TrackingType.SyncOffset;
+
+        public bool IsPositionalControlVisible => SelectedHeadTrackingMode != TrackingType.AsyncOffset;
+        
 
         public TrackingType SelectedHeadTrackingMode
         {
@@ -152,6 +158,8 @@ namespace VRE.Vridge.API.DesktopTester.ViewModel
 
                 selectedHeadTrackingMode = value;
                 RaisePropertyChanged();
+                RaisePropertyChanged(() => IsRotationalControlVisible);
+                RaisePropertyChanged(() => IsPositionalControlVisible);
 
                 // Send current slider states to VR
                 OnRotationChanged();

@@ -102,7 +102,7 @@ namespace VRE.Vridge.API.Client.Messages.v3.HeadTracking.Requests
             Recenter = 50,
 
             /// <summary>
-            /// Requests a response with current rotation data so the client can modify it. 
+            /// Requests a response with current pose data so the client can modify it. 
             /// This will prevent mobile data from reaching VR so you need to use any 
             /// Send* (0-6) packet as next req to keep the tracking data flowing.
             /// </summary>            

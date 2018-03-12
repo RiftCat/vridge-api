@@ -56,7 +56,7 @@
                       DisplayMemberPath="Value"
                       SelectedValuePath="Key" 
                       Visibility="{Binding IsControllingHeadTracking, Converter={StaticResource BoolToVisibilityConverter}}" />
-            <GroupBox Header="Position">
+            <GroupBox Header="Position" Visibility="{Binding IsPositionalControlVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                 <!-- Position sliders -->
                 <StackPanel Orientation="Vertical">
                     <view:LabeledSlider Label="X" Minimum="-3" Maximum="3" SliderValue="{Binding PositionX, Mode=TwoWay}" />
@@ -64,7 +64,7 @@
                     <view:LabeledSlider Label="Z" Minimum="-3" Maximum="3" SliderValue="{Binding PositionZ, Mode=TwoWay}" />
                 </StackPanel>
             </GroupBox>
-            <GroupBox Header="Rotation">
+            <GroupBox Header="Rotation" Visibility="{Binding IsRotationalControlVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                 <!-- Rotation sliders -->
                 <StackPanel Orientation="Vertical">
                     <view:LabeledSlider Label="Yaw" Minimum="-180" Maximum="180" SliderValue="{Binding Yaw, Mode=TwoWay}" />
