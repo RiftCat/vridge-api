@@ -65,6 +65,14 @@ See [Listening to broadcasts](https://github.com/RiftCat/vridge-api/wiki/Listeni
 
 ## Changes
 
+### API v-WIP (VRidge 2.3+)
+* Additional access layer to use API without worrying about connection state.
+* Remapping 3->6 DOF (...to be expanded)
+* Reprojection fixes:
+   * HeadTracking: SetAsyncOffset will be limited to writing only yaw for drift correction. 
+   * HeadTracking: When using reprojection-enabled device, API users will be limited to writing positional data only - externa; rotational data doesn't play well with devices expecting to use later reprojection based on their own data.
+
+
 ### API v3 (VRidge 2.0+)
 * Added velocity and acceleration to controller data packets.
 * Migrated protocol to Protobuf serialization scheme to make it easier to write cross-platform code.
