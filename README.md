@@ -35,9 +35,14 @@ C# projects require:
 
 Both are referenced as NuGet packages in .csproj and will be restored on pre-build.
 
-# API channels
+# API usage
 
-## Control endpoint
+## Simple fire-and-forget access
+If you don't want to manage connection state, you can use fire-and-forget access layer which manages the connection state for you. See [VridgeRemote](https://github.com/RiftCat/vridge-api/wiki/VridgeRemote-(fire-and-forget-layer)) for more details).
+
+## Advanced usage
+
+### Control endpoint
 
 This endpoint provides two functions:
 
@@ -47,7 +52,7 @@ This endpoint provides two functions:
 
 See [control channel wiki page](https://github.com/RiftCat/vridge-api/wiki/Control-channel) for details. 
 
-## Data endpoints
+### Data endpoints
 
 Data channels are used to interact with VRidge and send/receive actual data. Currently we have two endpoints. See pages below for details.
 
