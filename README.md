@@ -38,7 +38,7 @@ Both are referenced as NuGet packages in .csproj and will be restored on pre-bui
 # API usage
 
 ## Simple fire-and-forget access
-If you don't want to manage connection state, you can use fire-and-forget access layer which manages the connection state for you. See [VridgeRemote](https://github.com/RiftCat/vridge-api/wiki/VridgeRemote-(fire-and-forget-layer)) for more details).
+If you don't want to manage connection state, you can use fire-and-forget access layer which manages the connection state for you. See [VridgeRemote](https://github.com/RiftCat/vridge-api/wiki/VridgeRemote-(fire-and-forget-layer)) for more details.
 
 ## Advanced usage
 
