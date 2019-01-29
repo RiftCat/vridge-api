@@ -84,6 +84,7 @@ See [Listening to broadcasts](https://github.com/RiftCat/vridge-api/wiki/Listeni
 
 * Removed async offset's pitch and roll axes. Old calls will discard pitch and roll data and only use yaw offset. [Discussion](https://github.com/RiftCat/vridge-api/issues/15). 
 * When using reprojection-enabled device, rotational head tracking input will be discarded. External rotational data doesn't play well with devices expecting to use late reprojection based on their own sensor data.
+* Controllers will now disappear after 5 seconds without new data.
 * Deprecated OrientationMatrix as pose format. Added separate rotation quaternion and position vector instead. Removes ambiguity of pose matrix format and byte layout. Old format still works.
 * C# API client now multi-targets .NET Standard 2.0 and .NET Framework 4.7.
 
