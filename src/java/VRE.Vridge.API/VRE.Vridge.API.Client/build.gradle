@@ -1,0 +1,50 @@
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.google.protobuf:protobuf-lite:3.0.0'
+    compile group: 'org.zeromq', name: 'jeromq', version: '0.4.3'
+    compile group: 'com.google.code.gson', name: 'gson', version: '1.7.2'
+
+}
+
+sourceCompatibility = "1.6"
+targetCompatibility = "1.6"
+
+sourceSets{
+    main{
+        proto{
+
+        }
+        java{
+            main.java.srcDirs += 'src/main/javalite'
+        }
+    }
+}
+
+
+protobuf {
+    protoc {
+        // Download from repositories
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+    }
+    plugins {
+        javalite {
+            // The codegen for lite comes as a separate artifact
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                remove java
+            }
+            task.plugins {
+                javalite { }
+            }
+        }
+    }
+
+    generatedFilesBaseDir = "$projectDir/src"
+}

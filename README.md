@@ -35,9 +35,14 @@ C# projects require:
 
 Both are referenced as NuGet packages in .csproj and will be restored on pre-build.
 
-# API channels
+# API usage
 
-## Control endpoint
+## Simple fire-and-forget access
+If you don't want to manage connection state, you can use fire-and-forget access layer which manages the connection state for you. See [VridgeRemote](https://github.com/RiftCat/vridge-api/wiki/VridgeRemote-(fire-and-forget-layer)) for more details.
+
+## Advanced usage
+
+### Control endpoint
 
 This endpoint provides two functions:
 
@@ -47,7 +52,7 @@ This endpoint provides two functions:
 
 See [control channel wiki page](https://github.com/RiftCat/vridge-api/wiki/Control-channel) for details. 
 
-## Data endpoints
+### Data endpoints
 
 Data channels are used to interact with VRidge and send/receive actual data. Currently we have two endpoints. See pages below for details.
 
@@ -63,14 +68,29 @@ Broadcast endpoint carries one-way notifications. Currently only haptic pulses a
 
 See [Listening to broadcasts](https://github.com/RiftCat/vridge-api/wiki/Listening-to-haptic-feedback).
 
-## Changes
+## Changelog
 
-### API v-WIP (VRidge 2.3+)
-* Additional access layer to use API without worrying about connection state.
-* Remapping 3->6 DOF (...to be expanded)
-* Reprojection fixes:
-   * Head Tracking: SetAsyncOffset will be limited to writing only yaw for drift correction. 
-   * Head Tracking: When using reprojection-enabled device, API users won't be able to write direct rotational data. External rotational data doesn't play well with devices expecting to use late reprojection based on their own sensor data.
+### API v3.1 (VRidge 2.3+)
+
+#### Additions
+* Added Java API client.
+* Added VridgeRemote class as a fire-and-forget access layer to use API without managing connection state.
+* Added a way to remap 3DOF controllers into 6DOF controllers, attached to head.
+* Added HeadRelation which configures how the pose is affected by recenter calls. Default "Unrelated" should cover most cases.
+* Added discovery UDP broadcast which lets you find active VRidge servers on the local network.
+
+
+#### Changes
+
+* Removed async offset's pitch and roll axes. Old calls will discard pitch and roll data and only use yaw offset. [Discussion](https://github.com/RiftCat/vridge-api/issues/15). 
+* When using reprojection-enabled device, rotational head tracking input will be discarded. External rotational data doesn't play well with devices expecting to use late reprojection based on their own sensor data.
+* Controllers will now disappear after 5 seconds without new data.
+* Deprecated OrientationMatrix as pose format. Added separate rotation quaternion and position vector instead. Removes ambiguity of pose matrix format and byte layout. Old format still works.
+* C# API client now multi-targets .NET Standard 2.0 and .NET Framework 4.7.
+
+
+
+
 
 
 ### API v3 (VRidge 2.0+)
