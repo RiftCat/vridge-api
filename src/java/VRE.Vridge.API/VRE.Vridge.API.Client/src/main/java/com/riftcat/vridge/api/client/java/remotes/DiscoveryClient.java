@@ -33,6 +33,7 @@ class DiscoveryClient implements Thread.UncaughtExceptionHandler {
     }
 
     public void reset(){
+        dispose();
         beaconClient = new ZBeacon("255.255.255.255",38219, identity, true, true);
         beaconClient.setBroadcastInterval(1000);
         beaconClient.setListener(new ZBeacon.Listener() {
@@ -63,9 +64,12 @@ class DiscoveryClient implements Thread.UncaughtExceptionHandler {
         return beaconList.getFreshServers();
     }
 
-    public void dispose() {
+    public synchronized void dispose() {
         try {
-            beaconClient.stop();
+            if(beaconClient != null){
+                beaconClient.stop();
+                beaconClient = null;
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
