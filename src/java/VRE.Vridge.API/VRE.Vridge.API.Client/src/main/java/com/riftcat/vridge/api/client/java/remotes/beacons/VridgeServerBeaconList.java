@@ -12,7 +12,7 @@ import java.util.List;
 public class VridgeServerBeaconList {
     private HashMap<InetAddress, VridgeServerBeacon> timedList = new HashMap<InetAddress, VridgeServerBeacon>();
 
-    public void add(Beacon beacon, InetAddress endpoint){
+    public synchronized void add(Beacon beacon, InetAddress endpoint){
         if(timedList.containsKey(endpoint)){
             timedList.remove(endpoint);
         }
@@ -20,7 +20,7 @@ public class VridgeServerBeaconList {
         timedList.put(endpoint, new VridgeServerBeacon(beacon, endpoint));
     }
 
-    public List<VridgeServerBeacon> getFreshServers(){
+    public synchronized List<VridgeServerBeacon> getFreshServers(){
         LinkedList<VridgeServerBeacon> beacons = new LinkedList<VridgeServerBeacon>();
         for (VridgeServerBeacon vridgeServerBeacon : timedList.values()) {
             if(vridgeServerBeacon.isFresh()){
@@ -30,5 +30,4 @@ public class VridgeServerBeaconList {
 
         return beacons;
     }
-
 }
